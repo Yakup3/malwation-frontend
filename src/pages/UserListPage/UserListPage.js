@@ -12,7 +12,7 @@ import {
   TextField,
 } from "@mui/material";
 import { RiDeleteBinLine, RiArrowRightSLine } from "react-icons/ri";
-import { ROUTE_PATHS } from "../../App.routes";
+import { ROUTE_PATHS } from "../../shared.constants";
 
 const useStyles = makeStyles({
   userListContainer: {

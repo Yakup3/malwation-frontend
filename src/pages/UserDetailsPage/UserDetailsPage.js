@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { Button, TextField, Switch, Select, MenuItem } from "@mui/material";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { ROUTE_PATHS } from "../../App.routes";
+import { ROUTE_PATHS } from "../../shared.constants";
 
 const useStyles = makeStyles({
   userListContainer: {

@@ -16,7 +16,7 @@ export const ROUTE_NAMES = {
   EVENTS: "Events",
 };
 
-const APP_ROUTES = [
+export const APP_ROUTES = [
   {
     path: ROUTE_PATHS.USER_LIST,
     component: React.lazy(() => import("./pages/UserListPage/UserListPage")),
@@ -36,4 +36,6 @@ const APP_ROUTES = [
   },
 ];
 
-export default APP_ROUTES;
+export const LOCAL_STORAGE = {
+  TOKEN: "token",
+};
