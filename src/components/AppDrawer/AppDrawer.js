@@ -2,35 +2,69 @@ import React from "react";
 import {
   Divider,
   Drawer,
-  IconButton,
   List,
   ListItem,
-  ListItemIcon,
+  Typography,
   ListItemText,
-  Tooltip,
 } from "@mui/material";
+import { ROUTE_NAMES, ROUTE_PATHS } from "../../App.routes";
+import { IoSettings } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 const AppDrawer = () => {
+  const user = {
+    name: "John Doe",
+    email: "johndoe@example.com",
+  };
+
   return (
     <Drawer variant="permanent">
-      <div>
-        <IconButton>{/* <IoChevronBack /> */}</IconButton>
+      <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <div style={{ flexGrow: 1 }}>
+          <Typography variant="h6" style={{ padding: "16px" }}>
+            MALWATION
+          </Typography>
+          <List>
+            <ListItem button component={Link} to={ROUTE_PATHS.USER_LIST}>
+              <ListItemText primary={ROUTE_NAMES.USER_LIST} />
+            </ListItem>
+            <ListItem button component={Link} to={ROUTE_PATHS.EVENTS}>
+              <ListItemText primary={ROUTE_NAMES.EVENTS} />
+            </ListItem>
+          </List>
+        </div>
+        <Divider />
+        <div style={{ padding: "18px" }}>
+          <ListItem button onClick={() => console.log("Settings")}>
+            <IoSettings
+              style={{
+                marginRight: "8px",
+              }}
+            />
+            <ListItemText primary="Settings" />
+          </ListItem>
+          <div
+            style={{
+              marginTop: "auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
+            <Typography variant="body2" style={{ marginBottom: "4px" }}>
+              {user.name}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {user.email}
+            </Typography>
+            <List>
+              <ListItem button onClick={() => console.log("Logout")}>
+                <ListItemText primary="Logout" />
+              </ListItem>
+            </List>
+          </div>
+        </div>
       </div>
-      <Divider />
-      <Divider />
-      <List>
-        <ListItem
-          button
-          onClick={() => {
-            console.log("logout");
-          }}
-        >
-          <Tooltip title={"common.logout"}>
-            <ListItemIcon>{/* <IoLogOut /> */}</ListItemIcon>
-          </Tooltip>
-          <ListItemText primary={"common.logout"} />
-        </ListItem>
-      </List>
     </Drawer>
   );
 };

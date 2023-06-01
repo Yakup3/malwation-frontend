@@ -1,11 +1,11 @@
 import React from "react";
 import AppDrawer from "../AppDrawer/AppDrawer";
 
-const AppContainer = ({ component: Component }) => {
+const AppContainer = ({ component }) => {
   return (
     <div>
       <AppDrawer />
-      {Component}
+      {component}
     </div>
   );
 };

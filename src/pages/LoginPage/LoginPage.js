@@ -17,7 +17,7 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Perform your login logic here, e.g., sending API requests
+
     console.log("Email:", email);
     console.log("Password:", password);
   };

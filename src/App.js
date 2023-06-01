@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import LoginPage from "./pages/LoginPage/LoginPage";
@@ -9,7 +9,7 @@ import APP_ROUTES, { ROUTE_PATHS } from "./App.routes";
 
 const App = () => {
   const [routes] = useState(APP_ROUTES);
-  const [isAuthenticated] = useState(false);
+  const [isAuthenticated] = useState(true);
 
   const renderAppRoutes = () => {
     return routes.map((route) => {
@@ -30,12 +30,14 @@ const App = () => {
   };
 
   return (
-    <Routes>
-      <Route path={ROUTE_PATHS.LOGIN} element={<LoginPage />} />
-      <Route path={ROUTE_PATHS.REGISTER} element={<RegisterPage />} />
-      {renderAppRoutes()}
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+    <Suspense fallback={<div>{"common.loading"}... </div>}>
+      <Routes>
+        <Route path={ROUTE_PATHS.LOGIN} element={<LoginPage />} />
+        <Route path={ROUTE_PATHS.REGISTER} element={<RegisterPage />} />
+        {renderAppRoutes()}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Suspense>
   );
 };
 

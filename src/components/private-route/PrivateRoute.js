@@ -4,9 +4,9 @@ import { Navigate } from "react-router-dom";
 import { ROUTE_PATHS } from "../../App.routes";
 import AppContainer from "../AppContainer/AppContainer";
 
-const PrivateRoute = ({ component: Component, isAuthenticated }) => {
+const PrivateRoute = ({ component, isAuthenticated }) => {
   return isAuthenticated ? (
-    <AppContainer component={Component} />
+    <AppContainer component={component} />
   ) : (
     <Navigate to={ROUTE_PATHS.LOGIN} />
   );
