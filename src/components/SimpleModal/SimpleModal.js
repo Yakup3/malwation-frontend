@@ -50,7 +50,7 @@ const SimpleModal = ({
       onClose={handleCancel}
       classes={{ paper: classes.dialogPaper }}
     >
-      <DialogTitle>Update Event</DialogTitle>
+      <DialogTitle>{isUpdate ? "Update" : "Add"} Event</DialogTitle>
       <DialogContent>
         <form className={classes.form}>
           {children}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import {
@@ -14,6 +14,13 @@ import {
 } from "@mui/material";
 import { FiPlus } from "react-icons/fi";
 import SimpleModal from "../../components/SimpleModal/SimpleModal";
+import {
+  createEvent,
+  deleteEventById,
+  fetchEventById,
+  fetchEvents,
+  updateEventById,
+} from "../../services/request";
 
 const useStyles = makeStyles({
   userListContainer: {
@@ -57,37 +64,61 @@ const EventsPage = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      name: "Event 1",
-      date: "June 15, 2023",
-      location: "New York City",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-    {
-      id: 2,
-      name: "Event 2",
-      date: "July 10, 2023",
-      location: "San Francisco",
-      description: "Nulla facilisi. Sed nec felis eu dolor viverra sodales.",
-    },
-  ]);
+  const [events, setEvents] = useState([]);
 
-  const handleAddEvent = () => {};
+  useEffect(() => {
+    getEventList();
+  }, []);
+
+  const getEventList = async () => {
+    fetchEvents()
+      .then((response) => {
+        if (response.success) {
+          setEvents(response.events);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getEventById = (id) => {
+    fetchEventById(id)
+      .then((response) => {
+        const { event } = response;
+        if (event) {
+          setSelectedEvent(event);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleAddEvent = () => {
+    const newEvent = {
+      eventName: "",
+      eventDate: "",
+      eventLocation: "",
+      eventDescription: "",
+    };
+    setSelectedEvent(newEvent);
+    setOpen(true);
+    setIsUpdate(false);
+  };
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const filteredEvents = events.filter((event) =>
-    event.name.toLowerCase().includes(searchTerm.toLowerCase())
+    event.eventName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleOpenModal = (event, isUpdate) => {
     setOpen(true);
     setIsUpdate(isUpdate);
-    setSelectedEvent(event);
+    getEventById(event._id);
   };
 
   const handleCloseModal = () => {
@@ -95,11 +126,78 @@ const EventsPage = () => {
   };
 
   const handleOnDelete = () => {
-    setOpen(false);
+    deleteEventById(selectedEvent._id)
+      .then((response) => {
+        if (response.success) {
+          getEventList();
+          handleCloseModal();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const updateEvent = () => {
+    updateEventById(selectedEvent._id, selectedEvent)
+      .then((response) => {
+        if (response.success) {
+          getEventList();
+          handleCloseModal();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const addEvent = () => {
+    createEvent(selectedEvent)
+      .then((response) => {
+        if (response.success) {
+          getEventList();
+          handleCloseModal();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleOnUpdate = () => {
-    setOpen(false);
+    if (isUpdate) {
+      updateEvent();
+    } else {
+      addEvent();
+    }
+  };
+
+  const handleNameChange = (event) => {
+    setSelectedEvent((prevEvent) => ({
+      ...prevEvent,
+      eventName: event.target.value,
+    }));
+  };
+
+  const handleDateChange = (event) => {
+    setSelectedEvent((prevEvent) => ({
+      ...prevEvent,
+      eventDate: event.target.value,
+    }));
+  };
+
+  const handleLocationChange = (event) => {
+    setSelectedEvent((prevEvent) => ({
+      ...prevEvent,
+      eventLocation: event.target.value,
+    }));
+  };
+
+  const handleDescriptionChange = (event) => {
+    setSelectedEvent((prevEvent) => ({
+      ...prevEvent,
+      eventDescription: event.target.value,
+    }));
   };
 
   return (
@@ -143,11 +241,11 @@ const EventsPage = () => {
                 </TableRow>
               ) : (
                 filteredEvents.map((event) => (
-                  <TableRow key={event.id}>
-                    <TableCell>{event.name}</TableCell>
-                    <TableCell>{event.date}</TableCell>
-                    <TableCell>{event.location}</TableCell>
-                    <TableCell>{event.description}</TableCell>
+                  <TableRow key={event._id}>
+                    <TableCell>{event.eventName}</TableCell>
+                    <TableCell>{event.eventDate}</TableCell>
+                    <TableCell>{event.eventLocation}</TableCell>
+                    <TableCell>{event.eventDescription}</TableCell>
                     <TableCell>
                       <Button
                         onClick={() => {
@@ -174,17 +272,31 @@ const EventsPage = () => {
         >
           {selectedEvent && (
             <>
-              <TextField label="Name" defaultValue={selectedEvent.name} />
-              <TextField label="Date" defaultValue={selectedEvent.date} />
+              <TextField
+                label="Name"
+                value={selectedEvent.eventName}
+                onChange={handleNameChange}
+              />
+              <TextField
+                label="Date"
+                type="date"
+                value={selectedEvent.eventDate}
+                onChange={handleDateChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
               <TextField
                 label="Location"
-                defaultValue={selectedEvent.location}
+                value={selectedEvent.eventLocation}
+                onChange={handleLocationChange}
               />
               <TextField
                 label="Description"
                 multiline
                 rows={4}
-                defaultValue={selectedEvent.description}
+                value={selectedEvent.eventDescription}
+                onChange={handleDescriptionChange}
               />
             </>
           )}
