@@ -11,7 +11,7 @@ export const ROUTE_PATHS = {
 export const ROUTE_NAMES = {
   LOGIN: "Login",
   REGISTER: "Register",
-  USER_LIST: "User List",
+  USER_LIST: "Users",
   USER_DETAILS: "User Details",
   EVENTS: "Events",
 };

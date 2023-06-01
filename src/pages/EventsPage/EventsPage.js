@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import {
   Button,
@@ -10,9 +10,10 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
-import { RiArrowRightSLine, RiDeleteBinLine } from "react-icons/ri";
-import { ROUTE_PATHS } from "../../App.routes";
+import { FiPlus } from "react-icons/fi";
+import SimpleModal from "../../components/SimpleModal/SimpleModal";
 
 const useStyles = makeStyles({
   userListContainer: {
@@ -33,10 +34,14 @@ const useStyles = makeStyles({
     color: "#777777",
   },
   searchContainer: {
+    width: "95%",
     marginBottom: "10px",
     "& .MuiTextField-root": {
       width: "500px",
     },
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   notFoundMessage: {
     textAlign: "center",
@@ -47,10 +52,12 @@ const useStyles = makeStyles({
 
 const EventsPage = () => {
   const classes = useStyles();
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const events = [
+  const [events, setEvents] = useState([
     {
       id: 1,
       name: "Event 1",
@@ -65,15 +72,9 @@ const EventsPage = () => {
       location: "San Francisco",
       description: "Nulla facilisi. Sed nec felis eu dolor viverra sodales.",
     },
-  ];
+  ]);
 
-  const deleteEvent = (eventId) => {
-    console.log(`Deleting event with ID: ${eventId}`);
-  };
-
-  const handleEventClick = (eventId) => {
-    navigate(ROUTE_PATHS.EVENT_DETAILS.replace(":id", eventId));
-  };
+  const handleAddEvent = () => {};
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -82,6 +83,24 @@ const EventsPage = () => {
   const filteredEvents = events.filter((event) =>
     event.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleOpenModal = (event, isUpdate) => {
+    setOpen(true);
+    setIsUpdate(isUpdate);
+    setSelectedEvent(event);
+  };
+
+  const handleCloseModal = () => {
+    setOpen(false);
+  };
+
+  const handleOnDelete = () => {
+    setOpen(false);
+  };
+
+  const handleOnUpdate = () => {
+    setOpen(false);
+  };
 
   return (
     <div className={classes.userListContainer}>
@@ -94,7 +113,15 @@ const EventsPage = () => {
             value={searchTerm}
             onChange={handleSearchChange}
             variant="outlined"
+            style={{ marginRight: "10px" }}
           />
+          <Button
+            variant="outlined"
+            onClick={handleAddEvent}
+            startIcon={<FiPlus />}
+          >
+            Add
+          </Button>
         </div>
         <TableContainer>
           <Table>
@@ -104,14 +131,13 @@ const EventsPage = () => {
                 <TableCell>Date</TableCell>
                 <TableCell>Location</TableCell>
                 <TableCell>Description</TableCell>
-                <TableCell>Action</TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredEvents.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className={classes.notFoundMessage}>
+                  <TableCell colSpan={5} className={classes.notFoundMessage}>
                     No event found.
                   </TableCell>
                 </TableRow>
@@ -123,17 +149,13 @@ const EventsPage = () => {
                     <TableCell>{event.location}</TableCell>
                     <TableCell>{event.description}</TableCell>
                     <TableCell>
-                      <Button onClick={() => deleteEvent(event.id)}>
-                        <RiDeleteBinLine />
-                      </Button>
-                    </TableCell>
-                    <TableCell>
                       <Button
-                        onClick={() => handleEventClick(event.id)}
+                        onClick={() => {
+                          handleOpenModal(event, true);
+                        }}
                         component={Link}
-                        to={ROUTE_PATHS.EVENT_DETAILS.replace(":id", event.id)}
                       >
-                        <RiArrowRightSLine size={25} />
+                        <Typography variant="body2">Edit</Typography>
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -142,6 +164,31 @@ const EventsPage = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        <SimpleModal
+          open={open}
+          isUpdate={isUpdate}
+          onClose={handleCloseModal}
+          onDelete={handleOnDelete}
+          onUpdate={handleOnUpdate}
+        >
+          {selectedEvent && (
+            <>
+              <TextField label="Name" defaultValue={selectedEvent.name} />
+              <TextField label="Date" defaultValue={selectedEvent.date} />
+              <TextField
+                label="Location"
+                defaultValue={selectedEvent.location}
+              />
+              <TextField
+                label="Description"
+                multiline
+                rows={4}
+                defaultValue={selectedEvent.description}
+              />
+            </>
+          )}
+        </SimpleModal>
       </div>
     </div>
   );
