@@ -1,15 +1,20 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 
-import APP_ROUTES, { ROUTE_PATHS } from "./App.routes";
+import { AppContextProvider } from "./AppContext";
+import { ROUTE_PATHS, APP_ROUTES, LOCAL_STORAGE } from "./shared.constants";
 
 const App = () => {
   const [routes] = useState(APP_ROUTES);
-  const [isAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  useEffect(() => {
+    const token = localStorage.getItem(LOCAL_STORAGE.TOKEN);
+    setIsAuthenticated(!!token);
+  }, []);
 
   const renderAppRoutes = () => {
     return routes.map((route) => {
@@ -31,12 +36,14 @@ const App = () => {
 
   return (
     <Suspense fallback={<div>{"common.loading"}... </div>}>
-      <Routes>
-        <Route path={ROUTE_PATHS.LOGIN} element={<LoginPage />} />
-        <Route path={ROUTE_PATHS.REGISTER} element={<RegisterPage />} />
-        {renderAppRoutes()}
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+      <AppContextProvider routes={routes}>
+        <Routes>
+          <Route path={ROUTE_PATHS.LOGIN} element={<LoginPage />} />
+          <Route path={ROUTE_PATHS.REGISTER} element={<RegisterPage />} />
+          {renderAppRoutes()}
+          <Route path="*" element={<Navigate to={ROUTE_PATHS.LOGIN} />} />
+        </Routes>
+      </AppContextProvider>
     </Suspense>
   );
 };

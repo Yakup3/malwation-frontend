@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { styles } from "./LoginPage.style";
-import { ROUTE_PATHS } from "../../App.routes";
+import { handleLogin } from "../../services/request";
+import { LOCAL_STORAGE, ROUTE_PATHS } from "../../shared.constants";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -18,8 +21,16 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log("Email:", email);
-    console.log("Password:", password);
+    handleLogin(email, password)
+      .then((res) => {
+        if (res.success) {
+          localStorage.setItem(LOCAL_STORAGE.TOKEN, res.token);
+          navigate(ROUTE_PATHS.USER_LIST);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

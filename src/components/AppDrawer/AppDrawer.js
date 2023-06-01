@@ -7,11 +7,16 @@ import {
   Typography,
   ListItemText,
 } from "@mui/material";
-import { ROUTE_NAMES, ROUTE_PATHS } from "../../App.routes";
+import {
+  LOCAL_STORAGE,
+  ROUTE_NAMES,
+  ROUTE_PATHS,
+} from "../../shared.constants";
 import { IoSettings } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AppDrawer = () => {
+  const navigate = useNavigate();
   const user = {
     name: "John Doe",
     email: "johndoe@example.com",
@@ -58,7 +63,13 @@ const AppDrawer = () => {
               {user.email}
             </Typography>
             <List>
-              <ListItem button onClick={() => console.log("Logout")}>
+              <ListItem
+                button
+                onClick={() => {
+                  localStorage.removeItem(LOCAL_STORAGE.TOKEN);
+                  navigate(ROUTE_PATHS.LOGIN);
+                }}
+              >
                 <ListItemText primary="Logout" />
               </ListItem>
             </List>
