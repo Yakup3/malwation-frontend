@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import {
@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { RiDeleteBinLine, RiArrowRightSLine } from "react-icons/ri";
 import { ROUTE_PATHS } from "../../shared.constants";
+import { deleteUserById, fetchUsers } from "../../services/request";
 
 const useStyles = makeStyles({
   userListContainer: {
@@ -64,30 +65,40 @@ const useStyles = makeStyles({
 const UserListPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const users = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "1234567890",
-      role: "Admin",
-      active: true,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      phone: "9876543210",
-      role: "User",
-      active: false,
-    },
-  ];
+  useEffect(() => {
+    fetchUserList();
+  }, []);
+
+  const fetchUserList = () => {
+    fetchUsers()
+      .then((response) => {
+        if (response.success) {
+          setUsers(response.users);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const deleteUser = (userId) => {
-    console.log(`Deleting user with ID: ${userId}`);
+    deleteUserById(userId)
+      .then((response) => {
+        if (response.success) {
+          fetchUserList();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
+
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleUserClick = (userId) => {
     navigate(ROUTE_PATHS.USER_DETAILS.replace(":id", userId));
@@ -96,10 +107,6 @@ const UserListPage = () => {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
-
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className={classes.userListContainer}>
@@ -136,7 +143,7 @@ const UserListPage = () => {
                 </TableRow>
               ) : (
                 filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
+                  <TableRow key={user._id}>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.phone}</TableCell>
@@ -152,15 +159,15 @@ const UserListPage = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Button onClick={() => deleteUser(user.id)}>
+                      <Button onClick={() => deleteUser(user._id)}>
                         <RiDeleteBinLine size={18} />
                       </Button>
                     </TableCell>
                     <TableCell>
                       <Button
-                        onClick={() => handleUserClick(user.id)}
+                        onClick={() => handleUserClick(user._id)}
                         component={Link}
-                        to={ROUTE_PATHS.USER_DETAILS.replace(":id", user.id)}
+                        to={ROUTE_PATHS.USER_DETAILS.replace(":id", user._id)}
                       >
                         <RiArrowRightSLine size={25} />
                       </Button>

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@mui/styles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, TextField, Switch, Select, MenuItem } from "@mui/material";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { ROUTE_PATHS } from "../../shared.constants";
+import { fetchUserById, updateUserById } from "../../services/request";
 
 const useStyles = makeStyles({
   userListContainer: {
@@ -52,10 +53,30 @@ const useStyles = makeStyles({
 });
 
 const UserDetailsPage = () => {
+  const { id } = useParams();
   const classes = useStyles();
   const navigate = useNavigate();
+  const [user, setUser] = useState({});
   const [isActive, setIsActive] = useState(true);
   const [selectedRole, setSelectedRole] = useState("User");
+
+  useEffect(() => {
+    fetchUser();
+  }, [id]);
+
+  const fetchUser = () => {
+    fetchUserById(id)
+      .then((response) => {
+        if (response.success) {
+          setUser(response.user);
+          setIsActive(response.user.active);
+          setSelectedRole(response.user.role);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const handleGoBack = () => {
     navigate(ROUTE_PATHS.USER_LIST);
@@ -67,6 +88,49 @@ const UserDetailsPage = () => {
 
   const handleRoleChange = (event) => {
     setSelectedRole(event.target.value);
+  };
+
+  const handleNameChange = (event) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      name: event.target.value,
+    }));
+  };
+
+  const handleEmailChange = (event) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      email: event.target.value,
+    }));
+  };
+
+  const handlePhoneChange = (event) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      phone: event.target.value,
+    }));
+  };
+
+  const handleUpdateUser = (event) => {
+    event.preventDefault();
+
+    const updatedUser = {
+      ...user,
+      active: isActive,
+      role: selectedRole,
+    };
+
+    console.log(updatedUser);
+
+    updateUserById(id, updatedUser)
+      .then((response) => {
+        if (response.success) {
+          handleGoBack();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -89,9 +153,24 @@ const UserDetailsPage = () => {
         </div>
         <h1 className={classes.title}>Update User</h1>
         <form className={classes.form}>
-          <TextField label="Name" style={{ gridArea: "name" }} />
-          <TextField label="Email" style={{ gridArea: "email" }} />
-          <TextField label="Phone" style={{ gridArea: "phone" }} />
+          <TextField
+            label="Name"
+            style={{ gridArea: "name" }}
+            value={user.name || ""}
+            onChange={handleNameChange}
+          />
+          <TextField
+            label="Email"
+            style={{ gridArea: "email" }}
+            value={user.email || ""}
+            onChange={handleEmailChange}
+          />
+          <TextField
+            label="Phone"
+            style={{ gridArea: "phone" }}
+            value={user.phone || ""}
+            onChange={handlePhoneChange}
+          />
           <Select
             value={selectedRole}
             onChange={handleRoleChange}
@@ -113,6 +192,7 @@ const UserDetailsPage = () => {
             color="primary"
             type="submit"
             className={classes.submitButton}
+            onClick={handleUpdateUser}
           >
             Update
           </Button>

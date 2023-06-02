@@ -186,3 +186,121 @@ export const createEvent = (event) =>
       console.log("addEvent catch Error: ", err);
     }
   });
+
+export const fetchUsers = () =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const token = getToken();
+
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: token,
+      };
+
+      const url = `${DEFAULT_BASE_URL}user-list/`;
+
+      axios
+        .get(url, {
+          headers,
+        })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+          console.log("fetch Users error: ", err);
+        });
+    } catch (err) {
+      reject(err);
+      console.log("fetchUsers catch Error: ", err);
+    }
+  });
+
+export const fetchUserById = (id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const token = getToken();
+
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: token,
+      };
+
+      const url = `${DEFAULT_BASE_URL}user-list/${id}`;
+
+      axios
+        .get(url, {
+          headers,
+        })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+          console.log("fetch User By ID error: ", err);
+        });
+    } catch (err) {
+      reject(err);
+      console.log("fetchUserById catch Error: ", err);
+    }
+  });
+
+export const updateUserById = (id, user) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const token = getToken();
+
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: token,
+      };
+
+      const url = `${DEFAULT_BASE_URL}user-list/update/${id}`;
+
+      axios
+        .put(url, user, {
+          headers,
+        })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+          console.log("update User error: ", err);
+        });
+    } catch (err) {
+      reject(err);
+      console.log("updateUser catch Error: ", err);
+    }
+  });
+
+export const deleteUserById = (id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const token = getToken();
+
+      const headers = {
+        Authorization: token,
+      };
+
+      const url = `${DEFAULT_BASE_URL}user-list/delete/${id}`;
+
+      axios
+        .delete(url, {
+          headers,
+        })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+          console.log("delete User error: ", err);
+        });
+    } catch (err) {
+      reject(err);
+      console.log("deleteUser catch Error: ", err);
+    }
+  });
