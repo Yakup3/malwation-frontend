@@ -6,7 +6,7 @@ import {
   ListItem,
   Typography,
   ListItemText,
-  ListItemIcon,
+  Button,
 } from "@mui/material";
 import { FiLogOut } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,10 +19,6 @@ import AlertDialog from "../AlertDialog/AlertDialog";
 
 const AppDrawer = () => {
   const navigate = useNavigate();
-  const user = {
-    name: "John Doe",
-    email: "johndoe@example.com",
-  };
 
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
@@ -57,29 +53,14 @@ const AppDrawer = () => {
         </div>
         <Divider />
         <div style={{ padding: "18px" }}>
-          <div
-            style={{
-              marginTop: "auto",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-            }}
-          >
-            <Typography variant="body2" style={{ marginBottom: "4px" }}>
-              {user.name}
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              {user.email}
-            </Typography>
-            <List>
-              <ListItem button onClick={handleLogoutDialogOpen}>
-                <ListItemIcon>
-                  <FiLogOut />
-                </ListItemIcon>
-                <ListItemText primary="Logout" />
-              </ListItem>
-            </List>
-          </div>
+          <Button onClick={handleLogoutDialogOpen}>
+            <FiLogOut
+              style={{
+                marginRight: "8px",
+              }}
+            />
+            Logout
+          </Button>
         </div>
       </div>
 
