@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import {
+  Alert,
   Button,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -21,6 +23,7 @@ import {
   fetchEvents,
   updateEventById,
 } from "../../services/request";
+import SnackbarComponent from "../../components/Snackbar/SnackbarComponent";
 
 const useStyles = makeStyles({
   userListContainer: {
@@ -63,6 +66,8 @@ const EventsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 
   const [events, setEvents] = useState([]);
 
@@ -131,6 +136,8 @@ const EventsPage = () => {
         if (response.success) {
           getEventList();
           handleCloseModal();
+          setIsSnackbarOpen(true);
+          setSnackbarMessage("Event deleted successfully!");
         }
       })
       .catch((error) => {
@@ -144,6 +151,8 @@ const EventsPage = () => {
         if (response.success) {
           getEventList();
           handleCloseModal();
+          setIsSnackbarOpen(true);
+          setSnackbarMessage("Event updated successfully!");
         }
       })
       .catch((error) => {
@@ -157,6 +166,8 @@ const EventsPage = () => {
         if (response.success) {
           getEventList();
           handleCloseModal();
+          setIsSnackbarOpen(true);
+          setSnackbarMessage("Event added successfully!");
         }
       })
       .catch((error) => {
@@ -198,6 +209,14 @@ const EventsPage = () => {
       ...prevEvent,
       eventDescription: event.target.value,
     }));
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setIsSnackbarOpen(false);
   };
 
   return (
@@ -301,6 +320,11 @@ const EventsPage = () => {
             </>
           )}
         </SimpleModal>
+        <SnackbarComponent
+          isSnackbarOpen={isSnackbarOpen}
+          snackbarMessage={snackbarMessage}
+          handleClose={handleClose}
+        />
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import {
 import { RiDeleteBinLine, RiArrowRightSLine } from "react-icons/ri";
 import { ROUTE_PATHS } from "../../shared.constants";
 import { deleteUserById, fetchUsers } from "../../services/request";
+import SnackbarComponent from "../../components/Snackbar/SnackbarComponent";
 
 const useStyles = makeStyles({
   userListContainer: {
@@ -67,6 +68,8 @@ const UserListPage = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 
   useEffect(() => {
     fetchUserList();
@@ -89,6 +92,8 @@ const UserListPage = () => {
       .then((response) => {
         if (response.success) {
           fetchUserList();
+          setIsSnackbarOpen(true);
+          setSnackbarMessage("User deleted successfully.");
         }
       })
       .catch((error) => {
@@ -106,6 +111,14 @@ const UserListPage = () => {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setIsSnackbarOpen(false);
   };
 
   return (
@@ -179,6 +192,11 @@ const UserListPage = () => {
           </Table>
         </TableContainer>
       </div>
+      <SnackbarComponent
+        isSnackbarOpen={isSnackbarOpen}
+        snackbarMessage={snackbarMessage}
+        handleClose={handleClose}
+      />
     </div>
   );
 };

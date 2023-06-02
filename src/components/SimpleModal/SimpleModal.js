@@ -54,14 +54,15 @@ const SimpleModal = ({
       <DialogContent>
         <form className={classes.form}>
           {children}
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Button color="error" onClick={() => handleDelete()}>
-              <RiDeleteBinLine size={18} />
-            </Button>
+          <Box display="flex" alignItems="center">
+            {isUpdate && (
+              <Box mr={1}>
+                <Button color="error" onClick={handleDelete}>
+                  <RiDeleteBinLine size={18} />
+                </Button>
+              </Box>
+            )}
+            <Box flexGrow={1} />
             <DialogActions>
               <Button onClick={handleCancel}>Cancel</Button>
               <Button onClick={handleUpdate} color="primary">
