@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Divider,
   Drawer,
@@ -6,20 +6,37 @@ import {
   ListItem,
   Typography,
   ListItemText,
+  ListItemIcon,
 } from "@mui/material";
+import { FiLogOut } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
 import {
   LOCAL_STORAGE,
   ROUTE_NAMES,
   ROUTE_PATHS,
 } from "../../shared.constants";
-import { IoSettings } from "react-icons/io5";
-import { Link, useNavigate } from "react-router-dom";
+import AlertDialog from "../AlertDialog/AlertDialog";
 
 const AppDrawer = () => {
   const navigate = useNavigate();
   const user = {
     name: "John Doe",
     email: "johndoe@example.com",
+  };
+
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem(LOCAL_STORAGE.TOKEN);
+    navigate(ROUTE_PATHS.LOGIN);
+  };
+
+  const handleLogoutDialogOpen = () => {
+    setLogoutDialogOpen(true);
+  };
+
+  const handleLogoutDialogClose = () => {
+    setLogoutDialogOpen(false);
   };
 
   return (
@@ -40,14 +57,6 @@ const AppDrawer = () => {
         </div>
         <Divider />
         <div style={{ padding: "18px" }}>
-          <ListItem button onClick={() => console.log("Settings")}>
-            <IoSettings
-              style={{
-                marginRight: "8px",
-              }}
-            />
-            <ListItemText primary="Settings" />
-          </ListItem>
           <div
             style={{
               marginTop: "auto",
@@ -63,19 +72,24 @@ const AppDrawer = () => {
               {user.email}
             </Typography>
             <List>
-              <ListItem
-                button
-                onClick={() => {
-                  localStorage.removeItem(LOCAL_STORAGE.TOKEN);
-                  navigate(ROUTE_PATHS.LOGIN);
-                }}
-              >
+              <ListItem button onClick={handleLogoutDialogOpen}>
+                <ListItemIcon>
+                  <FiLogOut />
+                </ListItemIcon>
                 <ListItemText primary="Logout" />
               </ListItem>
             </List>
           </div>
         </div>
       </div>
+
+      <AlertDialog
+        title="Logout"
+        message="Are you sure you want to logout?"
+        open={logoutDialogOpen}
+        onClose={handleLogoutDialogClose}
+        onConfirm={handleLogout}
+      />
     </Drawer>
   );
 };
