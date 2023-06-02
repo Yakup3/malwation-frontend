@@ -1,11 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { styles } from "./RegisterPage.style";
+import { handleRegister } from "../../services/request";
+import SnackbarComponent from "../../components/Snackbar/SnackbarComponent";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -21,9 +27,28 @@ const RegisterPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Perform your register logic here, e.g., sending API requests
-    console.log("Email:", email);
-    console.log("Password:", password);
+
+    if (password !== verifyPassword) {
+      setIsSnackbarOpen(true);
+      setSnackbarMessage("Passwords do not match");
+    } else {
+      handleRegister({ email, password })
+        .then((res) => {
+          if (res.success) {
+            navigate(-1);
+          } else {
+            setIsSnackbarOpen(true);
+            setSnackbarMessage(res.message);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setIsSnackbarOpen(false);
   };
 
   return (
@@ -81,6 +106,12 @@ const RegisterPage = () => {
           </Box>
         </Box>
       </Container>
+      <SnackbarComponent
+        severity="error"
+        isSnackbarOpen={isSnackbarOpen}
+        snackbarMessage={snackbarMessage}
+        handleClose={handleCloseSnackbar}
+      />
     </Box>
   );
 };
