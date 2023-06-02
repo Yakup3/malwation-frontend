@@ -60,7 +60,7 @@ const useStyles = makeStyles({
 const EventsPage = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("s");
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
