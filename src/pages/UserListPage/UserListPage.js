@@ -14,6 +14,7 @@ import {
 import { RiDeleteBinLine, RiArrowRightSLine } from "react-icons/ri";
 import { ROUTE_PATHS } from "../../shared.constants";
 import { deleteUserById, fetchUsers } from "../../services/request";
+import AlertDialog from "../../components/AlertDialog/AlertDialog";
 import SnackbarComponent from "../../components/Snackbar/SnackbarComponent";
 
 const useStyles = makeStyles({
@@ -68,8 +69,10 @@ const UserListPage = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchUserList();
@@ -119,6 +122,23 @@ const UserListPage = () => {
     }
 
     setIsSnackbarOpen(false);
+  };
+
+  const handleDeleteUser = () => {
+    if (selectedUser) {
+      deleteUser(selectedUser._id);
+      setDeleteDialogOpen(false);
+    }
+  };
+
+  const handleDeleteDialogOpen = (user) => {
+    setSelectedUser(user);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setSelectedUser(null);
+    setDeleteDialogOpen(false);
   };
 
   return (
@@ -172,7 +192,7 @@ const UserListPage = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Button onClick={() => deleteUser(user._id)}>
+                      <Button onClick={() => handleDeleteDialogOpen(user)}>
                         <RiDeleteBinLine size={18} />
                       </Button>
                     </TableCell>
@@ -196,6 +216,15 @@ const UserListPage = () => {
         isSnackbarOpen={isSnackbarOpen}
         snackbarMessage={snackbarMessage}
         handleClose={handleClose}
+      />
+      <AlertDialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteDialogClose}
+        onConfirm={handleDeleteUser}
+        cancel="No"
+        confirm="Yes"
+        title="Delete User"
+        message="Are you sure you want to delete this user?"
       />
     </div>
   );

@@ -8,7 +8,15 @@ import {
   Button,
 } from "@mui/material";
 
-const AlertDialog = ({ open, onClose, onConfirm, title, message }) => {
+const AlertDialog = ({
+  open,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  cancel = "Cancel",
+  confirm = "Confirm",
+}) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
@@ -16,9 +24,9 @@ const AlertDialog = ({ open, onClose, onConfirm, title, message }) => {
         <Typography variant="body1">{message}</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>{cancel}</Button>
         <Button onClick={onConfirm} color="primary">
-          Confirm
+          {confirm}
         </Button>
       </DialogActions>
     </Dialog>
