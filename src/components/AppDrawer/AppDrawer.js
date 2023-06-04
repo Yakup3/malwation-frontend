@@ -10,12 +10,9 @@ import {
 } from "@mui/material";
 import { FiLogOut } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  LOCAL_STORAGE,
-  ROUTE_NAMES,
-  ROUTE_PATHS,
-} from "../../shared.constants";
+import AuthService from "../../auth/authService";
 import AlertDialog from "../AlertDialog/AlertDialog";
+import { ROUTE_NAMES, ROUTE_PATHS } from "../../shared.constants";
 
 const AppDrawer = () => {
   const navigate = useNavigate();
@@ -23,7 +20,7 @@ const AppDrawer = () => {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem(LOCAL_STORAGE.TOKEN);
+    AuthService.logout();
     navigate(ROUTE_PATHS.LOGIN);
   };
 

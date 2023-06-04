@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { styles } from "./LoginPage.style";
-import { handleLogin } from "../../services/request";
-import { LOCAL_STORAGE, ROUTE_PATHS } from "../../shared.constants";
+import { ROUTE_PATHS } from "../../shared.constants";
+import { AuthContext } from "../../auth/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("hello2@gmail.com");
+  const [password, setPassword] = useState("password");
+
+  const { login } = useContext(AuthContext);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -18,19 +20,17 @@ const LoginPage = () => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    handleLogin(email, password)
-      .then((res) => {
-        if (res.success) {
-          localStorage.setItem(LOCAL_STORAGE.TOKEN, res.token);
-          navigate(ROUTE_PATHS.USER_LIST);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    try {
+      const token = await login(email, password);
+      if (token) {
+        navigate(ROUTE_PATHS.USER_LIST, { replace: true });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

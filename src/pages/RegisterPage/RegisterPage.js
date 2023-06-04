@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { styles } from "./RegisterPage.style";
-import { handleRegister } from "../../services/request";
+import { AuthContext } from "../../auth/AuthContext";
 import SnackbarComponent from "../../components/Snackbar/SnackbarComponent";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const { register } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
@@ -25,25 +26,24 @@ const RegisterPage = () => {
     setVerifyPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== verifyPassword) {
       setIsSnackbarOpen(true);
       setSnackbarMessage("Passwords do not match");
     } else {
-      handleRegister({ email, password })
-        .then((res) => {
-          if (res.success) {
-            navigate(-1);
-          } else {
-            setIsSnackbarOpen(true);
-            setSnackbarMessage(res.message);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      try {
+        const res = await register(email, password);
+        if (res.success) {
+          navigate(-1);
+        } else {
+          setIsSnackbarOpen(true);
+          setSnackbarMessage(res.message);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 

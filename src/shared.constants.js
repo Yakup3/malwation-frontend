@@ -1,7 +1,7 @@
 import React from "react";
 
 export const ROUTE_PATHS = {
-  LOGIN: "/",
+  LOGIN: "/login",
   REGISTER: "/register",
   USER_LIST: "/user-list",
   USER_DETAILS: "/user/:id",
