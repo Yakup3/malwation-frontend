@@ -40,10 +40,30 @@ const AppDrawer = () => {
             MALWATION
           </Typography>
           <List>
-            <ListItem button component={Link} to={ROUTE_PATHS.USER_LIST}>
+            <ListItem
+              button
+              component={Link}
+              to={ROUTE_PATHS.USER_LIST}
+              sx={{
+                backgroundColor:
+                  window.location.pathname === ROUTE_PATHS.USER_LIST
+                    ? "#f0f0f0"
+                    : "transparent",
+              }}
+            >
               <ListItemText primary={ROUTE_NAMES.USER_LIST} />
             </ListItem>
-            <ListItem button component={Link} to={ROUTE_PATHS.EVENTS}>
+            <ListItem
+              button
+              component={Link}
+              to={ROUTE_PATHS.EVENTS}
+              sx={{
+                backgroundColor:
+                  window.location.pathname === ROUTE_PATHS.EVENTS
+                    ? "#f0f0f0"
+                    : "transparent",
+              }}
+            >
               <ListItemText primary={ROUTE_NAMES.EVENTS} />
             </ListItem>
           </List>
