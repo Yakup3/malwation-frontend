@@ -5,6 +5,7 @@ import { Button, TextField, Switch, Select, MenuItem } from "@mui/material";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { ROUTE_PATHS } from "../../shared.constants";
 import { fetchUserById, updateUserById } from "../../services/request";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const useStyles = makeStyles({
   userListContainer: {
@@ -58,6 +59,7 @@ const UserDetailsPage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [isActive, setIsActive] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedRole, setSelectedRole] = useState("User");
 
   useEffect(() => {
@@ -65,9 +67,11 @@ const UserDetailsPage = () => {
   }, [id]);
 
   const fetchUser = () => {
+    setIsLoading(true);
     fetchUserById(id)
       .then((response) => {
         if (response.success) {
+          setIsLoading(false);
           setUser(response.user);
           setIsActive(response.user.active);
           setSelectedRole(response.user.role);
@@ -75,6 +79,7 @@ const UserDetailsPage = () => {
       })
       .catch((error) => {
         console.log(error);
+        setIsLoading(false);
       });
   };
 
@@ -120,8 +125,6 @@ const UserDetailsPage = () => {
       role: selectedRole,
     };
 
-    console.log(updatedUser);
-
     updateUserById(id, updatedUser)
       .then((response) => {
         if (response.success) {
@@ -151,52 +154,58 @@ const UserDetailsPage = () => {
             Back to Users
           </Button>
         </div>
-        <h1 className={classes.title}>Update User</h1>
-        <form className={classes.form}>
-          <TextField
-            label="Name"
-            style={{ gridArea: "name" }}
-            value={user.name || ""}
-            onChange={handleNameChange}
-          />
-          <TextField
-            label="Email"
-            style={{ gridArea: "email" }}
-            value={user.email || ""}
-            onChange={handleEmailChange}
-          />
-          <TextField
-            label="Phone"
-            style={{ gridArea: "phone" }}
-            value={user.phone || ""}
-            onChange={handlePhoneChange}
-          />
-          <Select
-            value={selectedRole}
-            onChange={handleRoleChange}
-            style={{ gridArea: "role" }}
-          >
-            <MenuItem value="Admin">Admin</MenuItem>
-            <MenuItem value="User">User</MenuItem>
-          </Select>
-          <div style={{ gridArea: "status" }}>
-            <span>Status: </span>
-            <Switch
-              checked={isActive}
-              onChange={handleStatusChange}
-              color="primary"
-            />
-          </div>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            className={classes.submitButton}
-            onClick={handleUpdateUser}
-          >
-            Update
-          </Button>
-        </form>
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <>
+            <h1 className={classes.title}>Update User</h1>
+            <form className={classes.form}>
+              <TextField
+                label="Name"
+                style={{ gridArea: "name" }}
+                value={user.name || ""}
+                onChange={handleNameChange}
+              />
+              <TextField
+                label="Email"
+                style={{ gridArea: "email" }}
+                value={user.email || ""}
+                onChange={handleEmailChange}
+              />
+              <TextField
+                label="Phone"
+                style={{ gridArea: "phone" }}
+                value={user.phone || ""}
+                onChange={handlePhoneChange}
+              />
+              <Select
+                value={selectedRole}
+                onChange={handleRoleChange}
+                style={{ gridArea: "role" }}
+              >
+                <MenuItem value="Admin">Admin</MenuItem>
+                <MenuItem value="User">User</MenuItem>
+              </Select>
+              <div style={{ gridArea: "status" }}>
+                <span>Status: </span>
+                <Switch
+                  checked={isActive}
+                  onChange={handleStatusChange}
+                  color="primary"
+                />
+              </div>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                className={classes.submitButton}
+                onClick={handleUpdateUser}
+              >
+                Update
+              </Button>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );

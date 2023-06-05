@@ -22,6 +22,7 @@ import {
   updateEventById,
 } from "../../services/request";
 import SnackbarComponent from "../../components/Snackbar/SnackbarComponent";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const useStyles = makeStyles({
   userListContainer: {
@@ -63,6 +64,7 @@ const EventsPage = () => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isUpdate, setIsUpdate] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
@@ -74,14 +76,17 @@ const EventsPage = () => {
   }, []);
 
   const getEventList = async () => {
+    setIsLoading(true);
     fetchEvents()
       .then((response) => {
         if (response.success) {
           setEvents(response.events);
         }
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setIsLoading(false);
       });
   };
 
@@ -238,47 +243,51 @@ const EventsPage = () => {
             Add
           </Button>
         </div>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredEvents.length === 0 ? (
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <TableContainer>
+            <Table>
+              <TableHead>
                 <TableRow>
-                  <TableCell colSpan={5} className={classes.notFoundMessage}>
-                    No event found.
-                  </TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Location</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
-              ) : (
-                filteredEvents.map((event) => (
-                  <TableRow key={event._id}>
-                    <TableCell>{event.eventName}</TableCell>
-                    <TableCell>{event.eventDate}</TableCell>
-                    <TableCell>{event.eventLocation}</TableCell>
-                    <TableCell>{event.eventDescription}</TableCell>
-                    <TableCell>
-                      <Button
-                        onClick={() => {
-                          handleOpenModal(event, true);
-                        }}
-                        component={Link}
-                      >
-                        <Typography variant="body2">Edit</Typography>
-                      </Button>
+              </TableHead>
+              <TableBody>
+                {filteredEvents.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className={classes.notFoundMessage}>
+                      No event found.
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                ) : (
+                  filteredEvents.map((event) => (
+                    <TableRow key={event._id}>
+                      <TableCell>{event.eventName}</TableCell>
+                      <TableCell>{event.eventDate}</TableCell>
+                      <TableCell>{event.eventLocation}</TableCell>
+                      <TableCell>{event.eventDescription}</TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => {
+                            handleOpenModal(event, true);
+                          }}
+                          component={Link}
+                        >
+                          <Typography variant="body2">Edit</Typography>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
 
         <SimpleModal
           open={open}

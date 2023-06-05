@@ -16,6 +16,7 @@ import { ROUTE_PATHS } from "../../shared.constants";
 import { deleteUserById, fetchUsers } from "../../services/request";
 import AlertDialog from "../../components/AlertDialog/AlertDialog";
 import SnackbarComponent from "../../components/Snackbar/SnackbarComponent";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const useStyles = makeStyles({
   userListContainer: {
@@ -69,6 +70,7 @@ const UserListPage = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
@@ -79,14 +81,17 @@ const UserListPage = () => {
   }, []);
 
   const fetchUserList = () => {
+    setIsLoading(true);
     fetchUsers()
       .then((response) => {
         if (response.success) {
           setUsers(response.users);
         }
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setIsLoading(false);
       });
   };
 
@@ -154,63 +159,67 @@ const UserListPage = () => {
             variant="outlined"
           />
         </div>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Action</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredUsers.length === 0 ? (
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <TableContainer>
+            <Table>
+              <TableHead>
                 <TableRow>
-                  <TableCell colSpan={7} className={classes.notFoundMessage}>
-                    No users found.
-                  </TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Phone</TableCell>
+                  <TableCell>Role</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Action</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
-              ) : (
-                filteredUsers.map((user) => (
-                  <TableRow key={user._id}>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.phone}</TableCell>
-                    <TableCell>{user.role}</TableCell>
-                    <TableCell>
-                      <div className={classes.activeStatus}>
-                        <div
-                          className={`${classes.activeCircle} ${
-                            user.active ? classes.active : classes.inactive
-                          }`}
-                        />
-                        {user.active ? "Active" : "Inactive"}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Button onClick={() => handleDeleteDialogOpen(user)}>
-                        <RiDeleteBinLine size={18} />
-                      </Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        onClick={() => handleUserClick(user._id)}
-                        component={Link}
-                        to={ROUTE_PATHS.USER_DETAILS.replace(":id", user._id)}
-                      >
-                        <RiArrowRightSLine size={25} />
-                      </Button>
+              </TableHead>
+              <TableBody>
+                {filteredUsers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className={classes.notFoundMessage}>
+                      No users found.
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <TableRow key={user._id}>
+                      <TableCell>{user.name}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>{user.phone}</TableCell>
+                      <TableCell>{user.role}</TableCell>
+                      <TableCell>
+                        <div className={classes.activeStatus}>
+                          <div
+                            className={`${classes.activeCircle} ${
+                              user.active ? classes.active : classes.inactive
+                            }`}
+                          />
+                          {user.active ? "Active" : "Inactive"}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleDeleteDialogOpen(user)}>
+                          <RiDeleteBinLine size={18} />
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => handleUserClick(user._id)}
+                          component={Link}
+                          to={ROUTE_PATHS.USER_DETAILS.replace(":id", user._id)}
+                        >
+                          <RiArrowRightSLine size={25} />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </div>
       <SnackbarComponent
         isSnackbarOpen={isSnackbarOpen}
