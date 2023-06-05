@@ -46,4 +46,14 @@ export const styles = {
     fontWeight: "bold",
     borderRadius: "8px",
   },
+  loginMessage: {
+    fontSize: "14px",
+    textAlign: "center",
+  },
+  loginLink: {
+    fontSize: "14px",
+    textAlign: "center",
+    color: "#3f51b5",
+    textDecoration: "none",
+  },
 };

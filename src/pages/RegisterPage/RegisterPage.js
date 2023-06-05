@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { styles } from "./RegisterPage.style";
 import { AuthContext } from "../../auth/AuthContext";
+import { ROUTE_PATHS } from "../../shared.constants";
 import SnackbarComponent from "../../components/Snackbar/SnackbarComponent";
 
 const RegisterPage = () => {
@@ -120,6 +121,17 @@ const RegisterPage = () => {
                 )}
               </Button>
             </form>
+            <Typography variant="h7" sx={styles.loginMessage}>
+              Already have an account?{" "}
+              <Typography
+                variant="h7"
+                sx={styles.loginLink}
+                component="a"
+                href={ROUTE_PATHS.LOGIN}
+              >
+                Login
+              </Typography>
+            </Typography>
           </Box>
         </Box>
       </Container>
