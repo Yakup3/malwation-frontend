@@ -40,7 +40,3 @@ The application includes the following features:
 - Event update page for viewing and updating event information.
 - Ability to update basic event information such as name, date, and location.
 - Ability to delete events from the event list page.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
