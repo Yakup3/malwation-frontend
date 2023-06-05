@@ -1,12 +1,20 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Container, Typography, Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import { styles } from "./LoginPage.style";
 import { ROUTE_PATHS } from "../../shared.constants";
 import { AuthContext } from "../../auth/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("hello2@gmail.com");
   const [password, setPassword] = useState("password");
 
@@ -23,6 +31,8 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
       const token = await login(email, password);
       if (token) {
@@ -30,6 +40,8 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,8 +84,13 @@ const LoginPage = () => {
                 color="primary"
                 sx={styles.button}
                 fullWidth
+                disabled={loading}
               >
-                Sign in
+                {loading ? (
+                  <CircularProgress color="inherit" size={24} />
+                ) : (
+                  "Sign in"
+                )}
               </Button>
             </form>
           </Box>

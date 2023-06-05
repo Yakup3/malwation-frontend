@@ -1,6 +1,13 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Container, Typography, Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import { styles } from "./RegisterPage.style";
 import { AuthContext } from "../../auth/AuthContext";
 import SnackbarComponent from "../../components/Snackbar/SnackbarComponent";
@@ -10,6 +17,7 @@ const RegisterPage = () => {
   const { register } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [verifyPassword, setVerifyPassword] = useState("");
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
@@ -33,6 +41,8 @@ const RegisterPage = () => {
       setIsSnackbarOpen(true);
       setSnackbarMessage("Passwords do not match");
     } else {
+      setLoading(true);
+
       try {
         const res = await register(email, password);
         if (res.success) {
@@ -43,6 +53,8 @@ const RegisterPage = () => {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -99,8 +111,13 @@ const RegisterPage = () => {
                 color="primary"
                 sx={styles.button}
                 fullWidth
+                disabled={loading}
               >
-                Register
+                {loading ? (
+                  <CircularProgress color="inherit" size={24} />
+                ) : (
+                  "Register"
+                )}
               </Button>
             </form>
           </Box>
